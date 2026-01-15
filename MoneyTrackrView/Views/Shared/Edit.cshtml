@@ -1,0 +1,124 @@
+﻿@model MoneyTrackr.Borrowers.Models.Loan
+
+@{
+    string mode = ViewBag.Mode as string ?? "close";
+    bool isEdit = mode == "edit";
+    bool isPartial = mode == "partial";
+    bool isClose = mode == "close";
+
+    ViewData["Title"] =
+        isEdit ? "Edit Loan" :
+        isPartial ? "Add Partial Payment" :
+        "Close Loan";
+}
+
+<div class="card mb-3">
+    <div class="card-header">
+        @ViewData["Title"]
+    </div>
+
+    <div class="card-body">
+        <form asp-action="EditLoan" method="post" class="row g-3 needs-validation" novalidate>
+
+            <!-- Hidden -->
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="BorrowerId" />
+            <input type="hidden" name="mode" value="@mode" />
+
+            @* ===== 0️⃣ Edit Loan Mode ===== *@
+            @if (isEdit)
+            {
+                <div class="col-12 col-md-6">
+                    <label asp-for="Amount" class="form-label">Loan Amount (₹)</label>
+                    <input asp-for="Amount" class="form-control" />
+                    <span asp-validation-for="Amount" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="InterestRate" class="form-label">Interest Rate (%)</label>
+                    <input asp-for="InterestRate" class="form-control" />
+                    <span asp-validation-for="InterestRate" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="StartDate" class="form-label">Start Date</label>
+                    <input asp-for="StartDate" type="date" class="form-control" />
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6 form-check mt-4">
+                    <input asp-for="MontlyIntersetPayer" class="form-check-input" />
+                    <label asp-for="MontlyIntersetPayer" class="form-check-label">
+                        Monthly Interest Payer
+                    </label>
+                </div>
+
+                <div class="col-12 col-md-6 form-check mt-4">
+                    <input asp-for="NonCycledMemeber" class="form-check-input" />
+                    <label asp-for="NonCycledMemeber" class="form-check-label">
+                        Non-Cycled Member
+                    </label>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="Notes" class="form-label">Notes</label>
+                    <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger"></span>
+                </div>
+            }
+
+            @* ===== 1️⃣ Partial Payment Mode ===== *@
+            @if (isPartial)
+            {
+                <div class="col-12 col-md-6">
+                    <label asp-for="PartialPayment" class="form-label">Partial Payment Amount (₹)</label>
+                    <input asp-for="PartialPayment" class="form-control" />
+                    <span asp-validation-for="PartialPayment" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label asp-for="PartialPaymentPaidDate" class="form-label">Partial Payment Date</label>
+                    <input asp-for="PartialPaymentPaidDate" type="date" class="form-control" />
+                    <span asp-validation-for="PartialPaymentPaidDate" class="text-danger"></span>
+                </div>
+            }
+
+            @* ===== 2️⃣ Close Loan Mode ===== *@
+            @if (isClose)
+            {
+                <div class="col-12 col-md-6">
+                    <label asp-for="FullPaymentPaidDate" class="form-label">Full Payment Paid Date</label>
+                    <input asp-for="FullPaymentPaidDate" type="date" class="form-control" />
+                    <span asp-validation-for="FullPaymentPaidDate" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 col-md-6 form-check mt-4">
+                    <input asp-for="IsPaid" class="form-check-input" checked readonly />
+                    <label class="form-check-label">Loan Fully Paid</label>
+                </div>
+            }
+
+            <!-- Buttons -->
+            <div class="col-12 mt-3 d-flex flex-column flex-md-row gap-2">
+                <button type="submit" class="btn btn-primary">
+                    @(isEdit ? "Update Loan" :
+                                        isPartial ? "Save Partial Payment" :
+                                        "Close Loan")
+                </button>
+
+                <a asp-action="GetBorrowerById"
+                   asp-route-id="@Model.BorrowerId"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+}
+

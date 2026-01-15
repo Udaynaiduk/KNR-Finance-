@@ -1,0 +1,206 @@
+﻿@model IEnumerable<MoneyTrackr.Borrowers.Models.Borrower>
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var totalAmount = ViewBag.TotalAmount ?? 0m;
+    var totalInterest = ViewBag.TotalInterest ?? 0m;
+    int selectedMonth = ViewBag.SelectedMonth ?? DateTime.Now.Month;
+    int selectedYear = ViewBag.SelectedYear ?? DateTime.Now.Year;
+}
+<div class="container mt-4">
+    <!-- PAGE HEADER -->
+    <div class="bg-white shadow-sm rounded-3 p-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
+
+        <!-- Left side: Main Title + Subtitle -->
+        <div class="text-center text-md-start mb-3 mb-md-0">
+            <h1 class="fw-bold text-primary mb-2 fs-4 fs-md-2">KNR Finance</h1>
+            <h3 class="text-secondary mb-2 fs-6 fs-md-5">MoneyTrackr Dashboard</h3>
+            <p class="text-muted mb-0 fs-7 fs-md-6">
+                Track borrower performance, monitor 3-year defaulted loans, and get real-time insights
+                to make data-driven lending decisions.
+            </p>
+        </div>
+
+        <!-- Right side: Greeting + Date -->
+        <div class="text-center text-md-end">
+            <span class="fw-semibold text-primary d-block">
+                @if (DateTime.Now.Hour < 12)
+                {
+                    <text>Good Morning, @User.Identity.Name</text>
+                }
+                else if (DateTime.Now.Hour < 18)
+                {
+                    <text>Good Afternoon, @User.Identity.Name</text>
+                }
+                else
+                {
+                    <text>Good Evening, @User.Identity.Name</text>
+                }
+            </span>
+            <span class="text-muted small d-block">
+                @DateTime.Now.ToString("dddd, dd MMMM yyyy")
+            </span>
+        </div>
+    </div>
+</div>
+
+
+
+
+    <div class="row g-4">
+
+        <!-- ================= LEFT HALF : DEFAULT LOANS ================= -->
+        <div class="col-md-6">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0">3-Year Default Loans</h4>
+            </div>
+
+            <!-- MONTH & YEAR FILTER -->
+            @using System.Globalization
+            <form method="get" class="mb-3">
+                <div class="input-group w-100">
+                    <label class="input-group-text">Month</label>
+                    <select name="month" class="form-select">
+                        @for (int i = 1; i <= 12; i++)
+                        {
+                            var monthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i);
+                            <option value="@i" selected="@(i == selectedMonth)">
+                                @monthName
+                            </option>
+                        }
+                    </select>
+                    <label class="input-group-text">Year</label>
+                    <select name="year" class="form-select">
+                        @for (int y = DateTime.Now.Year - 5; y <= DateTime.Now.Year + 5; y++)
+                        {
+                            <option value="@y" selected="@(y == selectedYear)">
+                                @y
+                            </option>
+                        }
+                    </select>
+
+                    <button type="submit" class="btn btn-primary">
+                        Apply
+                    </button>
+                </div>
+            </form>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-warning text-center">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    No defaulted loans found for the selected month.
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive shadow-sm rounded">
+                    <table class="table table-bordered table-striped table-hover table-sm">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Borrower</th>
+                                <th>Loan Amount</th>
+                                <th>Start Date</th>
+                                <th>3 Years Completed</th>
+                                <th>Status</th>
+                                <th class="text-center">Action</th> <!-- New column -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var borrower in Model)
+                            {
+                                foreach (var loan in borrower.Loans)
+                                {
+                                    <tr>
+                                        <td>@borrower.FullName</td>
+                                        <td>₹@loan.Amount.ToString("N0")</td>
+                                        <td>@loan.StartDate.ToString("dd-MMM-yyyy")</td>
+                                        <td>@loan.EndDate.ToString("dd-MMM-yyyy")</td>
+                                        <td>
+                                            <span class="badge bg-danger">Defaulted</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <a class="btn btn-sm btn-primary"
+                                               asp-controller="Home"
+                                               asp-action="GetLoanById"
+                                               asp-route-Id="@loan.Id">
+                                                View Loan
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            }
+        </div>
+
+        <!-- ================= RIGHT HALF : PIE CHART ================= -->
+        <div class="col-md-6">
+
+            <h4 class="text-center mb-3">Loans Overview</h4>
+
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <canvas id="loanChart" height="260"></canvas>
+                </div>
+            </div>
+
+            <div class="alert alert-info text-center shadow-sm">
+                <h5 class="mb-2"><i class="bi bi-pie-chart-fill"></i> Summary</h5>
+                <p class="mb-1">
+                    <strong>Total Loan Amount:</strong> ₹@totalAmount.ToString("N0") <br />
+                    <strong>Total Interest:</strong> ₹@totalInterest.ToString("N0")
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const ctx = document.getElementById('loanChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Total Loan Amount', 'Total Interest'],
+                datasets: [{
+                    data: [@totalAmount, @totalInterest],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.75)',
+                        'rgba(255, 99, 132, 0.75)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            boxWidth: 20
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return context.label + ': ₹' +
+                                    context.raw.toLocaleString('en-IN');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}

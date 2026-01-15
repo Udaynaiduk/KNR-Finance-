@@ -1,0 +1,118 @@
+﻿@model MoneyTrackr.Borrowers.Models.Borrower
+
+<div class="container mt-4">
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1">@Model.FullName</h4>
+                <small>@Model.PhoneNumber | @Model.Address</small>
+            </div>
+            <div>
+                <a class="btn btn-light btn-sm"
+                   asp-controller="Home"
+                   asp-action="AddLoan"
+                   asp-route-borrowerId="@Model.Id">
+                    + Add New Loan
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+            @if (Model.Loans.Any())
+            {
+                <div class="row g-3">
+                    @foreach (var loan in Model.Loans)
+                    {
+                        @await Html.PartialAsync("LoanView", loan)
+                       
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info text-center">
+                    No loans available for this borrower.
+                </div>
+            }
+
+            <!-- ================= TOTAL ================= -->
+            <div class="mt-4 text-end">
+                <h5>Total Borrowed: <span class="text-primary">₹@Model.TotalBorrowedAmount.ToString("N2")</span></h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+                @*
+                     <div class="col-12 col-md-6">
+                            <div class="card shadow-sm border @(loan.IsOverThreeYears ? "border-danger" : "border-success") h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-2">
+                                        ₹@loan.Amount.ToString("N2")
+                                        <small class="text-muted">(@loan.InterestRate.ToString("F2")%)</small>
+                                    </h5>
+
+                                    <p class="mb-1"><strong>Start:</strong> @loan.StartDate.ToString("dd-MMM-yyyy")</p>
+                                    <p class="mb-1"><strong>End:</strong> @loan.EndDate.ToString("dd-MMM-yyyy")</p>
+                                    <p class="mb-1"><strong>Partial Paid:</strong> @(loan.PartialPayment > 0 ? loan.PartialPayment.ToString("N2") : "-")</p>
+                                    <p class="mb-1"><strong>Remaining:</strong> @loan.RemainingAmount.ToString("N2")</p>
+
+                                    <p class="mb-2">
+                                        <strong>Status:</strong>
+                                        @if (loan.IsPaid)
+                                        {
+                                            <span class="badge bg-success">Paid</span>
+                                        }
+                                        else if (loan.IsOverThreeYears)
+                                        {
+                                            <span class="badge bg-danger">Over 3 Years</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">Active</span>
+                                        }
+                                    </p>
+
+                                    <div class="mt-auto d-flex flex-wrap gap-1">
+                                        <a class="btn btn-sm btn-info flex-grow-1 flex-md-auto"
+                                           asp-action="GetInterestFor"
+                                           asp-controller="Home"
+                                           asp-route-id="@loan.Id">
+                                            Interest
+                                        </a>
+                                        <a class="btn btn-sm btn-primary flex-grow-1 flex-md-auto"
+                                           asp-action="EditLoan"
+                                           asp-controller="Home"
+                                           asp-route-id="@loan.Id"
+                                           asp-route-mode="edit">
+                                            Edit
+                                        </a>
+                                        <a class="btn btn-sm btn-warning flex-grow-1 flex-md-auto"
+                                           asp-action="EditLoan"
+                                           asp-controller="Home"
+                                           asp-route-id="@loan.Id"
+                                           asp-route-mode="partial">
+                                            Partial
+                                        </a>
+                                        <a class="btn btn-sm btn-success flex-grow-1 flex-md-auto"
+                                           asp-action="EditLoan"
+                                           asp-controller="Home"
+                                           asp-route-id="@loan.Id"
+                                           asp-route-mode="close">
+                                            Close
+                                        </a>
+                                        <a class="btn btn-sm btn-danger flex-grow-1 flex-md-auto"
+                                           asp-action="DeleteLoan"
+                                           asp-controller="Home"
+                                           asp-route-id="@loan.Id"
+                                           onclick="return confirm('Are you sure you want to delete this loan?');">
+                                            Delete
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                *@

@@ -1,0 +1,9 @@
+﻿@model MoneyTrackr.Borrowers.Models.LoanInterestInfo
+
+<h3>
+    Loan Interest Details for @Model.BorrowerName
+    on @Model.PrincipalAmount.ToString("C2")
+    starting on @Model.LastCycleStart.ToShortDateString()
+</h3>
+
+@await Html.PartialAsync("_LoanInterestTable", Model)

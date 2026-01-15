@@ -1,0 +1,47 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Error";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow-sm border-danger">
+                <div class="card-body text-center">
+
+                    <!-- Page Title -->
+                    <h2 class="text-danger mb-3">@ViewBag.Error</h2>
+
+                    <!-- Warning Symbol -->
+                    <div class="mb-3">
+                        <span class="display-1 text-danger">&#9888;</span>
+                    </div>
+
+                    <h1 class="text-danger mb-2">Oops! Something went wrong.</h1>
+                    <p class="lead text-muted mb-4">
+                        An error occurred while processing your request. Please contact the administrator if the problem persists.
+                    </p>
+
+                    @if (Model.ShowRequestId)
+                    {
+                        <p>
+                            <strong>Request ID:</strong> <code>@Model.RequestId</code>
+                        </p>
+                    }
+
+                    <a href="~/" class="btn btn-primary mt-3">
+                        <i class="bi bi-house-door"></i> Go Back Home
+                    </a>
+
+                    <hr class="my-4" />
+
+                    <p class="small text-muted">
+                        Development Mode Info: If enabled, more details about the error will be displayed. Do not enable in production.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,140 @@
+﻿@model MoneyTrackr.Borrowers.ViewModels.BorrowerWithLoansViewModel
+
+@{
+    ViewData["Title"] = "Add Borrower with Multiple Loans";
+}
+
+<h2>Add Borrower with Loans</h2>
+
+<form asp-action="CreateWithLoan" method="post" id="borrowerForm">
+    <div class="card mb-3">
+        <div class="card-header">Borrower Details</div>
+        <div class="card-body row g-3">
+            <div class="col-md-4">
+                <label asp-for="FullName" class="form-label"></label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Address" class="form-label"></label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header d-flex justify-content-between">
+            Loan Details
+            <button type="button" class="btn btn-success btn-sm" id="addLoanBtn">Add Loan</button>
+        </div>
+
+        <div class="card-body" id="loansContainer"></div>
+    </div>
+
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary btn-lg">Save</button>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        let loanIndex = 0;
+
+        function createLoanHtml(index) {
+            return `
+            <div class="loan-item border p-3 mb-3">
+                <h5>
+                    Loan #${index + 1}
+                    <button type="button" class="btn btn-danger btn-sm float-end" onclick="removeLoan(this)">Remove</button>
+                </h5>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label>Amount</label>
+                        <input name="Loans[${index}].Amount" type="number" step="0.01" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Interest Rate</label>
+                        <input name="Loans[${index}].InterestRate" type="number" step="0.01" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Start Date</label>
+                        <input name="Loans[${index}].StartDate" type="date" class="form-control" required />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Partial Payment</label>
+                        <input name="Loans[${index}].PartialPayment" type="number"  value=0 step="0.01" class="form-control" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Partial Payment Date</label>
+                        <input name="Loans[${index}].PartialPaymentPaidDate"  type="date" class="form-control" />
+                    </div>
+                    <div class="col-md-4 d-flex align-items-center">
+                        <div class="me-3">
+                            <label>Monthly Interest Payer</label>
+                            <select name="Loans[${index}].MontlyIntersetPayer" class="form-select">                               
+                                <option value="false">False</option>
+                                 <option value="true">True</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label>Non-Cycled Member</label>
+                            <select name="Loans[${index}].NonCycledMemeber" class="form-select">
+                                <option value="false">False</option>
+                                 <option value="true">True</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label>Notes</label>
+                        <textarea name="Loans[${index}].Notes" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        document.getElementById("addLoanBtn").addEventListener("click", () => {
+            document.getElementById("loansContainer")
+                .insertAdjacentHTML("beforeend", createLoanHtml(loanIndex++));
+        });
+
+        function removeLoan(btn) {
+            btn.closest(".loan-item").remove();
+            reIndexLoans();
+        }
+
+        function reIndexLoans() {
+            const items = document.querySelectorAll(".loan-item");
+            loanIndex = 0;
+
+            items.forEach(item => {
+                item.querySelector("h5").innerHTML = `Loan #${loanIndex + 1}
+                    <button type="button" class="btn btn-danger btn-sm float-end" onclick="removeLoan(this)">Remove</button>`;
+
+                item.querySelectorAll("input, textarea").forEach(el => {
+                    el.name = el.name.replace(/\[\d+\]/, `[${loanIndex}]`);
+                });
+
+                loanIndex++;
+            });
+        }
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

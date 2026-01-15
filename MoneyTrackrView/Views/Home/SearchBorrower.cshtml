@@ -1,0 +1,21 @@
+﻿@model IEnumerable<MoneyTrackr.Borrowers.Models.Borrower>
+
+@{
+    ViewData["Title"] = "Borrower Loan Details";
+}
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+@if(!Model.Any())
+{
+    <div class="alert alert-info">
+        No borrowers found matching your search criteria.
+    </div>
+}
+else
+{
+    @foreach (var borrower in Model)
+    {
+        @await Html.PartialAsync("BorrowerView", borrower)
+    }
+}

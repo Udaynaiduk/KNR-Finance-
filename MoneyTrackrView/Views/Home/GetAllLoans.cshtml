@@ -1,0 +1,14 @@
+﻿@model IEnumerable<MoneyTrackr.Borrowers.Models.Borrower>
+
+@{
+    ViewData["Title"] = "Borrower Loan Details";
+}
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+@foreach (var borrower in Model)
+{
+    @await Html.PartialAsync("Loan", borrower)
+}
+
+

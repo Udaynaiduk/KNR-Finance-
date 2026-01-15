@@ -1,0 +1,58 @@
+﻿@model MoneyTrackr.Borrowers.Models.LoanInterestInfo
+
+<div class="loan-calculation-sheet p-3 border rounded">
+
+    <h4>Loan Interest Details</h4>
+    <p><strong>Borrower:</strong> @Model.BorrowerName</p>
+    <p><strong>Principal:</strong> @Model.PrincipalAmount.ToString("C2")</p>
+    <p><strong>Interest Rate:</strong> @Model.InterestRate.ToString("N2") %</p>
+    <p><strong>Loan Start Date:</strong> @Model.LoanStartDate.ToShortDateString()</p>
+    @if (Model.LastCycleStart != DateTime.MinValue)
+    {
+        <p><strong>Loan Start Date:</strong> @Model.LastCycleStart.ToShortDateString()</p>
+    }
+
+    @* Partial Payment Section *@
+    @if (Model.PrincipalAmount > 0)
+    {
+        <div class="partial-payment-section mt-3">
+            <h5>Partial Payment</h5>
+            <p><strong>Amount Paid:</strong> @Model.PrincipalAmount.ToString("C2")</p>
+            <p><strong>Period:</strong> @Model.PartialMonths M @Model.PartialDays D</p>
+            <p><strong>Interest for Partial Period:</strong> @Model.PartialInterest.ToString("C2")</p>
+            <p><strong>Outstanding After Partial Payment:</strong> @Model.NewOutstandingAfterPartial</p>
+        </div>
+    }
+
+    @* Full 3-Year Cycles *@
+    @if (Model.Cycles != null && Model.Cycles.Any())
+    {
+        <div class="full-cycles-section mt-3">
+            <h5>Full 3-Year Compounding Cycles</h5>
+            @foreach (var cycle in Model.Cycles)
+            {
+                <div class="cycle mb-2 p-2 border rounded">
+                    <p><strong>Cycle #@cycle.CycleNumber</strong></p>
+                    <p>Start Date: @cycle.CycleStart.ToShortDateString()</p>
+                    <p>End Date: @cycle.CycleEnd.ToShortDateString()</p>
+                    <p>Principal at Start: @cycle.PrincipalStart.ToString("C2")</p>
+                    <p>Interest: @cycle.Interest.ToString("C2")</p>
+                    <p>Principal at End: @cycle.PrincipalEnd.ToString("C2")</p>
+                </div>
+            }
+        </div>
+    }
+
+    @* Remaining Period (<3 Years) *@
+    <div class="remaining-period-section mt-3">
+        <h5>Remaining Period</h5>
+        <p><strong>Period:</strong> @Model.RemainingMonths M @Model.RemainingDays D</p>
+        <p><strong>Interest:</strong> @Model.RemainingInterest.ToString("C2")</p>
+    </div>
+
+    @* Total Summary *@
+    <div class="total-summary mt-3 border-top pt-2">
+        <p><strong>Total Interest:</strong> @Model.TotalInterest.ToString("C2")</p>
+        <p><strong>Total Payable Amount:</strong> @Model.TotalPayableAmount.ToString("C2")</p>
+    </div>
+</div>
