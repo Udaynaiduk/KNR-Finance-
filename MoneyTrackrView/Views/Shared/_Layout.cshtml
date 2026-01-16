@@ -9,128 +9,90 @@
     <link rel="stylesheet" href="~/MoneyTrackrView.styles.css" asp-append-version="true" />
 </head>
 <body>
-   <header>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm mb-4">
-        <div class="container-fluid">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm py-2">
+            <div class="container">
 
-            <!-- Brand / Logo -->
-            <a class="navbar-brand d-flex align-items-center fw-bold" href="/">
-                <span class="text-primary" style="font-size:1.5rem;">KNR</span>
-                <span class="text-success ms-1" style="font-size:1.3rem;">Finance</span>
-            </a>
-
-            <!-- Mobile Toggler -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
-                    aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- Navbar content -->
-            <div class="collapse navbar-collapse" id="mainNavbar">
-
-                <!-- Left: Navigation buttons -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex align-items-center">
-                    <li class="nav-item me-2">
-                        <a class="btn btn-outline-primary rounded-pill d-flex align-items-center fw-semibold"
-                           asp-area="" asp-controller="Home" asp-action="CreateWithLoan">
-                            <i class="bi bi-person-plus me-1"></i> Add Member
-                        </a>
-                    </li>
-                    <li class="nav-item me-2">
-                        <a class="btn btn-outline-primary rounded-pill d-flex align-items-center fw-semibold"
-                           asp-area="" asp-controller="Home" asp-action="BorrowersDashboard">
-                            <i class="bi bi-people me-1"></i> Borrowers
-                        </a>
-                    </li>
-                    <li class="nav-item me-2">
-                        <a class="btn btn-outline-primary rounded-pill d-flex align-items-center fw-semibold"
-                           asp-area="" asp-controller="Home" asp-action="GetAllLoans">
-                            <i class="bi bi-wallet2 me-1"></i> Loans
-                        </a>
-                    </li>
-                </ul>
-
-                <!-- Right: Search + Loan Calculator + User -->
-                <div class="d-flex align-items-center ms-auto">
-
-                    <!-- Search bar (desktop) -->
-                    <form class="d-none d-lg-flex me-2" method="get" asp-action="SearchBorrower" asp-controller="Home">
-                        <input class="form-control me-2 rounded-pill" type="search" placeholder="Search Borrower..." name="query">
-                        <button class="btn btn-primary rounded-pill" type="submit">Search</button>
-                    </form>
-
-                    <!-- Loan Calculator (desktop) -->
-                    <a class="btn btn-success d-none d-lg-inline-flex align-items-center me-3 rounded-pill shadow-sm"
-                       asp-controller="Home" asp-action="InterestCalculator">
-                        <i class="bi bi-calculator me-1"></i> Loan Calculator
-                    </a>
-
-                    <!-- Authenticated user -->
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <span class="d-none d-lg-flex align-items-center fw-bold text-primary me-2">
-                            <i class="bi bi-person-circle me-1"></i> @User.Identity.Name
-                        </span>
-                        <form method="post" asp-area="" asp-controller="Account" asp-action="Logout" class="d-none d-lg-block">
-                            <button type="submit" class="btn btn-outline-danger rounded-pill">
-                                <i class="bi bi-box-arrow-right me-1"></i> Logout
-                            </button>
-                        </form>
-                    }
-                    else
-                    {
-                        <a class="btn btn-outline-primary d-none d-lg-inline-flex align-items-center rounded-pill"
-                           asp-area="" asp-controller="Account" asp-action="Login">
-                            <i class="bi bi-box-arrow-in-right me-1"></i> Login
-                        </a>
-                    }
-
-                </div>
-            </div>
-
-            <!-- Mobile layout -->
-            <div class="d-lg-none mt-3">
-
-                <!-- Search -->
-                <form class="d-flex mb-2" method="get" asp-action="SearchBorrower" asp-controller="Home">
-                    <input class="form-control me-2 rounded-pill" type="search" placeholder="Search Borrower..." name="query">
-                    <button class="btn btn-primary rounded-pill" type="submit">Search</button>
-                </form>
-
-                <!-- Loan Calculator -->
-                <a class="btn btn-success w-100 mb-2 rounded-pill d-flex align-items-center justify-content-center shadow-sm"
-                   asp-controller="Home" asp-action="InterestCalculator">
-                    <i class="bi bi-calculator me-1"></i> Loan Calculator
+                <!-- Brand -->
+                <a class="navbar-brand fw-bold d-flex align-items-center" asp-controller="Home" asp-action="Index">
+                    <span class="text-primary fs-4">KNR</span>
+                    <span class="text-success fs-5 ms-1">Finance</span>
                 </a>
 
-                <!-- User Info / Login -->
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <div class="card shadow-sm rounded-3 p-3 mb-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold text-primary d-flex align-items-center">
-                                <i class="bi bi-person-circle me-1"></i> @User.Identity.Name
-                            </span>
-                            <form method="post" asp-area="" asp-controller="Account" asp-action="Logout">
-                                <button type="submit" class="btn btn-outline-danger rounded-pill">
-                                    <i class="bi bi-box-arrow-right me-1"></i> Logout
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <a class="btn btn-outline-primary w-100 rounded-pill d-flex align-items-center justify-content-center mb-3"
-                       asp-area="" asp-controller="Account" asp-action="Login">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Login
-                    </a>
-                }
-            </div>
+                <!-- Toggler -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarMain">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-        </div>
-    </nav>
-</header>
+                <!-- Navbar -->
+                <div class="collapse navbar-collapse" id="navbarMain">
+
+                    <!-- Left Menu -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-2">
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" asp-controller="Home" asp-action="CreateWithLoan">
+                                Add Member
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" asp-controller="Home" asp-action="BorrowersDashboard">
+                                Borrowers
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link fw-semibold" asp-controller="Home" asp-action="GetAllLoans">
+                                Loans
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Right Side -->
+                    <div class="d-flex flex-column flex-lg-row gap-2 align-items-lg-center">
+
+                        <!-- Search -->
+                        <form class="d-flex" asp-controller="Home" asp-action="SearchBorrower">
+                            <input class="form-control rounded-pill me-2" type="search"
+                                   placeholder="Search borrower..." name="query">
+                            <button class="btn btn-primary rounded-pill">Search</button>
+                        </form>
+
+                        <!-- Calculator -->
+                        <a class="btn btn-success rounded-pill"
+                           asp-controller="Home" asp-action="InterestCalculator">
+                            Loan Calculator
+                        </a>
+
+                        <!-- Auth -->
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary rounded-pill dropdown-toggle"
+                                        data-bs-toggle="dropdown">
+                                    @User.Identity.Name
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                    <li>
+                                        <form method="post" asp-controller="Account" asp-action="Logout">
+                                            <button class="dropdown-item text-danger">Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <a class="btn btn-outline-primary rounded-pill"
+                               asp-controller="Account" asp-action="Login">
+                                Login
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
 
 
 
@@ -142,27 +104,47 @@
         </main>
     </div>
 
-    <footer class="border-top bg-light text-muted py-3 mt-5">
-        <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
-            <!-- Left side: copyright -->
-            <div class="mb-2 mb-md-0 text-center text-md-start">
-                &copy; 2026 - <span class="fw-bold">MoneyTrackrView</span>
-            </div>
+    <footer class="bg-light border-top mt-5">
+        <div class="container py-4">
 
-            <!-- Right side: links -->
-            <div class="text-center text-md-end">
-                <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none me-3">
-                    Privacy
-                </a>
-                <a href="#" class="text-decoration-none me-3">
-                    Terms
-                </a>
-                <a href="#" class="text-decoration-none">
-                    Contact
-                </a>
+            <div class="row text-center text-md-start align-items-center">
+
+                <!-- Brand -->
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <h5 class="fw-bold text-primary mb-1">KNR Finance</h5>
+                    <small class="text-muted">
+                        Smart loan & borrower management
+                    </small>
+                </div>
+
+                <!-- Links -->
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <ul class="list-inline mb-0">
+                        <li class="list-inline-item">
+                            <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-muted">
+                                Privacy
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#" class="text-decoration-none text-muted">Terms</a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a href="#" class="text-decoration-none text-muted">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Copyright -->
+                <div class="col-md-4 text-md-end">
+                    <small class="text-muted">
+                        © 2026 MoneyTrackrView. All rights reserved.
+                    </small>
+                </div>
+
             </div>
         </div>
     </footer>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -170,3 +152,13 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+<style>
+    .navbar .nav-link:hover {
+        color: #0d6efd !important;
+    }
+
+    footer a:hover {
+        text-decoration: underline;
+    }
+
+</style>
