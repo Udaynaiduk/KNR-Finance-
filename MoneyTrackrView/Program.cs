@@ -25,18 +25,18 @@ namespace MoneyTrackrView
                 )
             );
 
-            var cultureInfo = new CultureInfo("en-IN");
-            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+            // Cultures
+            var defaultCulture = new CultureInfo("en-GB");
+            CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
 
-            // Use a project-local persistent key ring to avoid cross-version/machine issues.
-            // This path works on Windows and inside containers.
+            // Data Protection: persist keys inside content root so Docker can mount them
             var keysPath = Path.Combine(builder.Environment.ContentRootPath, "keys");
             builder.Services.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
                 .SetApplicationName("MoneyTrackrApp");
 
-            // Ensure Antiforgery cookie is consistent and does not interfere with protection.
+            // Antiforgery cookie settings
             builder.Services.AddAntiforgery(options =>
             {
                 options.Cookie.Name = "MoneyTrackr.AntiForgery";
@@ -45,11 +45,7 @@ namespace MoneyTrackrView
                 options.Cookie.SameSite = SameSiteMode.Lax;
             });
 
-            var defaultCulture = new CultureInfo("en-GB");
-            CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
-            CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
-
-            // Add authentication
+            // AuthN/AuthZ
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -57,10 +53,9 @@ namespace MoneyTrackrView
                     options.AccessDeniedPath = "/Home/AccessDenied";
                     options.ExpireTimeSpan = TimeSpan.FromHours(1);
                 });
-
             builder.Services.AddAuthorization();
 
-            // Add services to the container.
+            // Services + MVC
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddScoped<ILoanService, LoanService>();
