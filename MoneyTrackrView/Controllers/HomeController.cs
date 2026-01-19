@@ -2,8 +2,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using MoneyTrackr.Borrowers.Helpers;
 using MoneyTrackr.Borrowers.Models;
 using MoneyTrackr.Borrowers.Services;
@@ -11,7 +9,7 @@ using MoneyTrackr.Borrowers.ViewModels;
 using MoneyTrackrView.Models;
 using System.Diagnostics;
 using System.Security.Claims;
-using System.Threading.Tasks;
+
 
 namespace MoneyTrackrView.Controllers
 {
