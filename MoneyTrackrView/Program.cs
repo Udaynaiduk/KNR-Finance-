@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using MoneyTrackr.Borrowers.Repository;
 using MoneyTrackr.Borrowers.Services;
@@ -29,6 +30,9 @@ namespace MoneyTrackrView
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
+            builder.Services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo(@"/tmp/keys")) // Use a writable folder
+                .SetApplicationName("MoneyTrackrApp"); // Ensures keys are tied to this app
 
             var defaultCulture = new CultureInfo("en-GB");
             CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
