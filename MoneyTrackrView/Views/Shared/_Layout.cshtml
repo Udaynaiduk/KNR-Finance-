@@ -27,10 +27,11 @@
 
                 <!-- Navbar -->
                 <div class="collapse navbar-collapse" id="navbarMain">
-
-                    <!-- Left Menu -->
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-2">
-                        <li class="nav-item">
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <!-- Left Menu -->
+                        <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-2">
+                            <li class="nav-item">
                             <a class="nav-link fw-semibold" asp-controller="Home" asp-action="CreateWithLoan">
                                 Add Member
                             </a>
@@ -46,17 +47,19 @@
                             </a>
                         </li>
                     </ul>
+                    }
 
                     <!-- Right Side -->
                     <div class="d-flex flex-column flex-lg-row gap-2 align-items-lg-center">
-
-                        <!-- Search -->
-                        <form class="d-flex" asp-controller="Home" asp-action="SearchBorrower">
-                            <input class="form-control rounded-pill me-2" type="search"
-                                   placeholder="Search borrower..." name="query">
-                            <button class="btn btn-primary rounded-pill">Search</button>
-                        </form>
-
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <!-- Search -->
+                            <form class="d-flex" method="get" asp-controller="Home" asp-action="SearchBorrower">
+                                <input class="form-control rounded-pill me-2" type="search"
+                                placeholder="Search borrower..." name="query">
+                                <button class="btn btn-primary rounded-pill">Search</button>
+                            </form>
+                        }
                         <!-- Calculator -->
                         <a class="btn btn-success rounded-pill"
                            asp-controller="Home" asp-action="InterestCalculator">
@@ -73,7 +76,7 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                     <li>
-                                        <form method="post" asp-controller="Account" asp-action="Logout">
+                                        <form method="post" asp-controller="Home" asp-action="Logout">
                                             <button class="dropdown-item text-danger">Logout</button>
                                         </form>
                                     </li>
@@ -83,9 +86,15 @@
                         else
                         {
                             <a class="btn btn-outline-primary rounded-pill"
-                               asp-controller="Account" asp-action="Login">
+                               asp-controller="Home" asp-action="SignIn">
                                 Login
                             </a>
+
+                            <a class="btn btn-outline-primary rounded-pill"
+                               asp-controller="Home" asp-action="SignUp">
+                                Sign Up
+                            </a>
+                            
                         }
                     </div>
                 </div>

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MoneyTrackr.Borrowers.Repository;
 using MoneyTrackr.Borrowers.Services;
@@ -32,8 +33,17 @@ namespace MoneyTrackrView
             var defaultCulture = new CultureInfo("en-GB");
             CultureInfo.DefaultThreadCurrentCulture = defaultCulture;
             CultureInfo.DefaultThreadCurrentUICulture = defaultCulture;
-          
-           
+            // Add authentication
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Home/SignIn"; // Redirect here if not logged in
+                    options.AccessDeniedPath = "/Home/AccessDenied"; // Redirect here if role is denied
+                    options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                });
+
+            builder.Services.AddAuthorization();
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -57,7 +67,7 @@ namespace MoneyTrackrView
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

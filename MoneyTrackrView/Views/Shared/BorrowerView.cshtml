@@ -25,12 +25,19 @@
                     + Add Loan
                 </a>
 
+                <a class="btn btn-warning  w-100"
+                   asp-controller="Home"
+                   asp-action="EditBorrower"
+                   asp-route-id="@Model.Id">                   
+                    Edit
+                </a>
+
                 <a class="btn btn-danger w-100"
                    asp-controller="Home"
                    asp-action="DeleteBorrower"
                    asp-route-id="@Model.Id"
                    onclick="return confirm('Are you sure you want to delete this borrower? All loans will also be deleted.');">
-                    Delete Borrower
+                    Delete
                 </a>
             </div>
         </div>

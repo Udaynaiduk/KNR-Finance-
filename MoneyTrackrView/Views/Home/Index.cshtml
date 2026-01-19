@@ -9,21 +9,12 @@
 }
 <div class="container mt-4">
     <!-- PAGE HEADER -->
-    <div class="bg-white shadow-sm rounded-3 p-4 d-flex flex-column flex-md-row justify-content-between align-items-center">
+    <div class="bg-white shadow-sm rounded-3 p-4 position-relative text-center">
 
-        <!-- Left side: Main Title + Subtitle -->
-        <div class="text-center text-md-start mb-3 mb-md-0">
-            <h1 class="fw-bold text-primary mb-2 fs-4 fs-md-2">KNR Finance</h1>
-            <h3 class="text-secondary mb-2 fs-6 fs-md-5">MoneyTrackr Dashboard</h3>
-            <p class="text-muted mb-0 fs-7 fs-md-6">
-                Track borrower performance, monitor 3-year defaulted loans, and get real-time insights
-                to make data-driven lending decisions.
-            </p>
-        </div>
-
-        <!-- Right side: Greeting + Date -->
-        <div class="text-center text-md-end">
-            <span class="fw-semibold text-primary d-block">
+        <!-- Greeting + Username + Date -->
+        <div class="position-absolute position-md-absolute top-0 end-0 m-3 text-end d-none d-md-block">
+            <!-- Only show absolute on md+ -->
+            <span class="fw-semibold text-primary me-2">
                 @if (DateTime.Now.Hour < 12)
                 {
                     <text>Good Morning, @User.Identity.Name</text>
@@ -37,15 +28,50 @@
                     <text>Good Evening, @User.Identity.Name</text>
                 }
             </span>
-            <span class="text-muted small d-block">
+            <br />
+            <span class="text-muted small">
                 @DateTime.Now.ToString("dddd, dd MMMM yyyy")
             </span>
         </div>
+
+        <!-- Greeting for mobile -->
+        <div class="d-block d-md-none mb-3 text-center">
+            <span class="fw-semibold text-primary">
+                @if (DateTime.Now.Hour < 12)
+                {
+                    <text>Good Morning, @User.Identity.Name</text>
+                }
+                else if (DateTime.Now.Hour < 18)
+                {
+                    <text>Good Afternoon, @User.Identity.Name</text>
+                }
+                else
+                {
+                    <text>Good Evening, @User.Identity.Name</text>
+                }
+            </span>
+            <br />
+            <span class="text-muted small">
+                @DateTime.Now.ToString("dddd, dd MMMM yyyy")
+            </span>
+        </div>
+
+        <!-- Main Title -->
+        <h1 class="fw-bold text-primary mb-2">KNR Finance</h1>
+
+        <!-- Subtitle -->
+        <h3 class="text-secondary mb-3">MoneyTrackr Dashboard</h3>
+
+        <!-- Description -->
+        <p class="text-muted mb-3">
+            Track borrower performance, monitor 3-year defaulted loans, and get real-time insights
+            to make data-driven lending decisions.
+        </p>
+
+        <!-- Decorative Separator -->
+        <hr class="border-primary border-2 w-25 mx-auto" />
     </div>
 </div>
-
-
-
 
     <div class="row g-4">
 

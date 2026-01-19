@@ -209,5 +209,28 @@ namespace MoneyTrackr.Borrowers.Services
                 throw new LoanServiceException(ex.Message, ex.ErrorCode);
             }
         }
+       public async Task<bool> SignUp(User user)
+        {
+            try
+            {
+                return await _loanRepo.AddUser(user);
+            }
+            catch (LoanServiceException ex)
+            {
+                throw new LoanServiceException(ex.Message, ex.ErrorCode);
+            }
+        }
+
+       public async Task<User> SignIn(string username, string password)
+        {
+            try
+            {
+                return await _loanRepo.ValidateUser(username, password);
+            }
+            catch (LoanServiceException Ex)
+            {
+               throw new LoanServiceException(Ex.Message, Ex.ErrorCode);
+            }
+        }
     }
 }

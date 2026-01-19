@@ -1,11 +1,16 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using MoneyTrackr.Borrowers.Helpers;
 using MoneyTrackr.Borrowers.Models;
 using MoneyTrackr.Borrowers.Services;
 using MoneyTrackr.Borrowers.ViewModels;
 using MoneyTrackrView.Models;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MoneyTrackrView.Controllers
@@ -14,13 +19,16 @@ namespace MoneyTrackrView.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ILoanService _loanService;
+        
 
         public HomeController(ILogger<HomeController> logger, ILoanService loanService)
         {
             _logger = logger;
             _loanService = loanService;
+           
         }
 
+        [Authorize(Roles ="Admin")]
         #region Basic Pages
         public async Task<IActionResult> Index(int month, int year)
         {
@@ -67,7 +75,8 @@ namespace MoneyTrackrView.Controllers
 
         #region Borrower & Loan Views
 
-        // GET: /Borrower/AllLoans
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
         public async Task<IActionResult> GetAllLoans()
         {
             try
@@ -83,6 +92,7 @@ namespace MoneyTrackrView.Controllers
         }
 
         // GET: /Borrower/ById/5
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetBorrowerById(int id)
         {
@@ -109,6 +119,7 @@ namespace MoneyTrackrView.Controllers
         #region Loan Edit / Partial / Close
 
         // GET: /Borrower/EditLoan/5?mode=edit|partial|close
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> EditLoan(int? id, string mode = "edit")
         {
@@ -138,6 +149,7 @@ namespace MoneyTrackrView.Controllers
         }
 
         // POST: /Borrower/EditLoan
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditLoan(int? id, string mode, Loan loan)
@@ -176,6 +188,7 @@ namespace MoneyTrackrView.Controllers
         #region Interest Calculations
 
         // GET: /Borrower/Interest/5
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetInterestFor(int id)
         {
@@ -191,6 +204,7 @@ namespace MoneyTrackrView.Controllers
         }
 
         // GET: /Borrower/AllLoansInterest
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllLoansInterest()
         {
@@ -205,7 +219,7 @@ namespace MoneyTrackrView.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateWithLoan(BorrowerWithLoansViewModel model)
@@ -245,12 +259,15 @@ namespace MoneyTrackrView.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
         public async Task<IActionResult> CreateWithLoan()
         {
 
             return View();
         }
 
+        [HttpGet]
         public async Task<IActionResult> AddLoan(int borrowerId)
         {
             try
@@ -275,6 +292,7 @@ namespace MoneyTrackrView.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> AddLoans(List<Loan> loans)
         {
@@ -308,13 +326,15 @@ namespace MoneyTrackrView.Controllers
             }
         }
 
-        public async Task<IActionResult> DeleteLoan(int id, int BrrowerId)
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> DeleteLoan(int id, int BorrowerId)
         {
             try
             {
 
                 await _loanService.DeleteLoanAsync(id);
-                return RedirectToAction("GetBorrowerById", new { id = BrrowerId });
+                return RedirectToAction("GetBorrowerById", new { id = BorrowerId });
             }
             catch (Exception ex)
             {
@@ -322,6 +342,8 @@ namespace MoneyTrackrView.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
         public async Task<IActionResult> BorrowersDashboard()
         {
             try
@@ -335,6 +357,8 @@ namespace MoneyTrackrView.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
         public async Task<IActionResult> DeleteBorrower(int id)
         {
             try
@@ -348,7 +372,8 @@ namespace MoneyTrackrView.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
         public async Task<IActionResult> GetLoanById(int id)
         {
             try
@@ -362,7 +387,7 @@ namespace MoneyTrackrView.Controllers
             }
         }
 
-
+       
         [HttpGet]
         public IActionResult InterestCalculator()
         {
@@ -391,6 +416,8 @@ namespace MoneyTrackrView.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
         public async Task<IActionResult> SearchBorrower([FromQuery(Name = "query")] string search)
         {
             try
@@ -403,6 +430,153 @@ namespace MoneyTrackrView.Controllers
                 return RedirectToAction("Error", new { message = ex.Message });
             }
 
+        }
+
+        // GET: /Account/SignUp
+        [HttpGet]
+        public IActionResult SignUp()
+        {
+            return View();
+        }
+
+        // POST: /Account/SignUp
+        [HttpPost]
+        public async Task<IActionResult> SignUp(User user)
+        {
+            if (!ModelState.IsValid)
+                return View(user);
+
+            try
+            {
+                var newuser = new User
+                {
+                    Username = user.Username,
+                    Password = user.Password,
+                    Email = user.Email,
+                    Role = "User"
+                };
+                var result = await _loanService.SignUp(newuser);
+                if (result)
+                    return RedirectToAction("SignIn"); // Redirect to login after successful signup
+
+                ModelState.AddModelError("", "Sign up failed. Try again.");
+            }
+            catch (LoanServiceException ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+
+            return View(user);
+        }
+
+        // GET: /Account/SignIn
+        [HttpGet]
+        public IActionResult SignIn()
+        {
+            return View();
+        }
+
+        // POST: /Account/SignIn
+    [HttpPost]
+    public async Task<IActionResult> SignIn(string username, string password)
+    {
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+        {
+            ModelState.AddModelError("", "Username and password are required.");
+            return View();
+        }
+
+        try
+        {
+            var userValid = await _loanService.SignIn(username,password);
+
+            if (userValid !=null)
+            {
+                // Create claims
+                var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, userValid.Username),
+                new Claim(ClaimTypes.Email, userValid.Email),
+                new Claim(ClaimTypes.Role, userValid.Role ?? "User") // Default role
+            };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true, // Remember login across sessions
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddHours(1)
+                };
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties
+                );
+                    if (userValid.Role == "Admin")
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        return RedirectToAction("InterestCalculator", "Home");
+                    }
+            }
+
+            ModelState.AddModelError("", "Invalid username or password.");
+        }
+        catch (LoanServiceException ex)
+        {
+            ModelState.AddModelError("", ex.Message);
+        }
+
+        return View();
+    }
+        
+       
+
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("SignIn");
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> EditBorrower(Borrower borrower)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(borrower);
+            }
+            try
+            {
+
+                await _loanService.UpdateBorrowerAsync(borrower.Id, borrower);
+                return RedirectToAction("GetBorrowerById", new { id = borrower.Id });
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Error", new { message = ex.Message });
+            }
+        }
+
+        [Authorize(Roles ="Admin")]
+        [HttpGet]
+        public async Task<IActionResult> EditBorrower(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            var borrower = await _loanService.GetBorrowerWithLoansAsync(id);
+            return View(borrower);
         }
 
         #endregion

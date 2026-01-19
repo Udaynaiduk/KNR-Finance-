@@ -5,7 +5,7 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "MoneyTrackrDatabase": "Server=(local);Database=MoneyTrackr_spokenend;"
+        "MoneyTrackrDatabase": "Server=fgrxjf.h.filess.io;port=3307;Database=MoneyTrackr_spokenend;user=MoneyTrackr_spokenend;password=be1be57fb37b3a44bdc0169c4ca79d75cef9ea55;sslmode=Required;"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5106"
@@ -15,7 +15,7 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "MoneyTrackrDatabase": "Server=(local);Database=MoneyTrackr_spokenend;"
+        "MoneyTrackrDatabase": "Server=fgrxjf.h.filess.io;port=3307;Database=MoneyTrackr_spokenend;user=MoneyTrackr_spokenend;password=be1be57fb37b3a44bdc0169c4ca79d75cef9ea55;sslmode=Required;"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7243;http://localhost:5106"
@@ -25,7 +25,7 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "MoneyTrackrDatabase": "Server=(local);Database=MoneyTrackr_spokenend;"
+        "MoneyTrackrDatabase": "Server=fgrxjf.h.filess.io;port=3307;Database=MoneyTrackr_spokenend;user=MoneyTrackr_spokenend;password=be1be57fb37b3a44bdc0169c4ca79d75cef9ea55;sslmode=Required;"
       }
     },
     "Container (Dockerfile)": {

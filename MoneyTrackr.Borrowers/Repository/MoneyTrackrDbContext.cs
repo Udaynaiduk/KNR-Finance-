@@ -12,5 +12,6 @@ namespace MoneyTrackr.Borrowers.Repository
         // DbSets for Borrowers and Loans would go here
          public DbSet<Borrower> Borrowers { get; set; }
          public DbSet<Loan> Loans { get; set; }
+         public DbSet<User> Users { get; set; }
     }
 }

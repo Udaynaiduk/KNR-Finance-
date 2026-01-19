@@ -31,6 +31,9 @@ namespace MoneyTrackr.Borrowers.Repository
 
         Task<(decimal TotalLoanAmount, decimal TotalInterest)> GetLoansSummaryAsync();
         
+        Task<bool> AddUser(User user);
+
+        Task<User> ValidateUser(string username, string password);
     }
 }
 

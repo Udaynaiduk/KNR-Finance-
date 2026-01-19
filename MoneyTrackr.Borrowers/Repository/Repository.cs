@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MoneyTrackr.Borrowers.Helpers;
 using MoneyTrackr.Borrowers.Models;
 using MoneyTrackr.Borrowers.Services; // For LoanServiceException
@@ -227,7 +228,7 @@ namespace MoneyTrackr.Borrowers.Repository
         }
 
         // Get borrowers who reached 3-year anniversary in N months
-        public async Task<IEnumerable<T>> GetBorrowers3YearAnniversaryAsync(int month,int year)
+        public async Task<IEnumerable<T>> GetBorrowers3YearAnniversaryAsync(int month, int year)
         {
             if (typeof(T) != typeof(Borrower))
             {
@@ -250,7 +251,7 @@ namespace MoneyTrackr.Borrowers.Repository
                                 !loan.IsPaid &&
                                 // loan completing 3 years between today and windowEnd
                                 loan.StartDate.AddYears(3).Month == month
-                               && loan.StartDate.AddYears(3).Year == year     
+                               && loan.StartDate.AddYears(3).Year == year
                             )
                             .ToList()
                     })
@@ -583,6 +584,69 @@ namespace MoneyTrackr.Borrowers.Repository
             decimal totalInterest = allLoans.Sum(l => l.TotalInterest);
 
             return (totalLoanAmount, totalInterest);
+        }
+
+        public async Task<bool> AddUser(User user)
+        {
+            var existingUser = await _context.Users
+                .FirstOrDefaultAsync(u => u.Username == user.Username);
+
+            if (existingUser == null)
+            {
+                var passwordHasher = new PasswordHasher<object>();
+                var newUser = new User
+                {
+                    Username = user.Username.ToLower(),
+                    Email = user.Email.ToLower(),
+                    Password = passwordHasher.HashPassword(null, user.Password),
+                    Role = user.Role
+                };
+
+                await _context.Users.AddAsync(newUser);  // <-- use newUser here
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                throw new LoanServiceException("Username already exists.", 400);
+            }
+        }
+
+
+        public async Task<User> ValidateUser(string username, string password)
+        {
+            try
+            {
+                // 1. Find the user by username (case-insensitive)
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Username.Equals(username.ToLower()));
+
+                if (user == null)
+                {
+                    throw new LoanServiceException("Invalid username", 401);
+                }
+
+                // 2. Create a PasswordHasher
+                var passwordHasher = new PasswordHasher<object>();
+
+                // 3. Verify the password
+                var result = passwordHasher.VerifyHashedPassword(null, user.Password, password);
+
+                if (result == PasswordVerificationResult.Success)
+                {
+                    return user; // Valid login
+                }
+
+                throw new LoanServiceException("Invalid password", 401);
+            }
+            catch (LoanServiceException)
+            {
+                throw; // Rethrow known exceptions
+            }
+            catch (Exception ex)
+            {
+                throw new LoanServiceException("Error validating user", ex, 500);
+            }
         }
 
 

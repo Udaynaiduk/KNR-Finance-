@@ -35,5 +35,9 @@ namespace MoneyTrackr.Borrowers.Services
         Task<Loan> GetLoanByIdAsync(int id);
 
         Task<(decimal TotalLoanAmount, decimal TotalInterest)> GetAllLoansSummaryAsync();
+
+        Task<bool> SignUp(User user);
+
+        Task<User> SignIn(string username, string password);
     }
 }
